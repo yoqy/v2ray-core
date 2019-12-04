@@ -1,2 +1,4 @@
 *.DS_Store
+v2ray.json
+v2ray_json.go
 bazel-*
