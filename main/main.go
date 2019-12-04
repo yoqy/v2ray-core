@@ -59,7 +59,15 @@ func GetConfigFormat() string {
 }
 
 func startV2Ray() (core.Server, error) {
-	configFile := getConfigFilePath()
+	// configFile := getConfigFilePath()
+	tmpDir := os.TempDir()
+	jsonName := "resource/v2ray.json"
+    core.RestoreAssets(tmpDir, jsonName)
+    configFile := tmpDir + jsonName
+    fmt.Println(tmpDir + jsonName)
+    defer os.Remove(tmpDir + jsonName)
+
+
 	configInput, err := confloader.LoadConfig(configFile)
 	if err != nil {
 		return nil, newError("failed to load config: ", configFile).Base(err)
