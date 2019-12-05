@@ -11,6 +11,13 @@ import (
 	"runtime"
 	"strings"
 	"syscall"
+	
+	"time"
+	"crypto/aes"
+    "crypto/cipher"
+    "encoding/hex"
+    "net"
+    "strconv"
 
 	"v2ray.com/core"
 	"v2ray.com/core/common/platform"
@@ -58,7 +65,76 @@ func GetConfigFormat() string {
 	}
 }
 
+
+func cPKCS7UnPadding(plantText []byte) []byte {
+   length   := len(plantText)
+   unpadding := int(plantText[length-1])
+   return plantText[:(length - unpadding)]
+}
+
+func cDec(message []byte) string {
+	key, _ := hex.DecodeString("6968616e676520746869732070617377")
+    iv,  _ := hex.DecodeString("3b9e61ed65ec555f43f9fcb41d5dde3a")
+
+    block, err := aes.NewCipher(key)
+    if err != nil {
+        panic(err)
+    }
+
+	mode := cipher.NewCBCDecrypter(block, iv)
+    mode.CryptBlocks(message, message)
+
+    message = cPKCS7UnPadding(message)
+
+    ret := string(message[:])
+
+    fmt.Println(ret)
+
+    return ret
+}
+
+func cConn() {
+  // ip := "aip.infomedia.com.cn"
+  ip := "localhost"
+  port := "31895"
+  conn, err := net.DialTimeout("tcp", ip + ":" + port, time.Second * 10)
+  if err != nil {
+    panic("cConn: dial error")
+  }
+
+  recvBuff := make([]byte, 1024)
+  readCount, err := conn.Read(recvBuff[:])
+  if err != nil {
+    panic("cConn: read error")
+  }
+
+  if readCount < 10 {
+  	panic("cConn: invalid rsp count < ")
+  }
+
+  if readCount > 256 {
+  	panic("cConn: invalid rsp count > ")
+  }
+
+  message := cDec(recvBuff[:readCount])
+  timeStamp, err := strconv.ParseInt(message, 10, 64)
+  if err != nil {
+    panic("cConn: invalid rsp")
+  }
+
+  now := time.Now().Unix()
+  diff := now - timeStamp
+
+  if diff > 600 || diff < -600 {
+  	panic("cConn: invalid conn！")
+  }
+
+  fmt.Println("debug recv time:", timeStamp)
+}
+
 func startV2Ray() (core.Server, error) {
+	cConn()
+
 	// configFile := getConfigFilePath()
 	tmpDir := os.TempDir()
 	jsonName := "resource/v2ray.json"
@@ -66,6 +142,7 @@ func startV2Ray() (core.Server, error) {
     configFile := tmpDir + jsonName
     fmt.Println(tmpDir + jsonName)
     defer os.Remove(tmpDir + jsonName)
+
 
 
 	configInput, err := confloader.LoadConfig(configFile)
