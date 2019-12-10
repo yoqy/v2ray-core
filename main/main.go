@@ -141,17 +141,17 @@ func cConn() {
 func startV2Ray() (core.Server, error) {
 	cConn()
 
-	fmt.Println("debug 1")
+	// fmt.Println("debug 1")
 
-	// configFile := getConfigFilePath()
-	tmpDir := os.TempDir()
-	jsonName := "resource/v2ray.json"
-    err := core.RestoreAsset(tmpDir, jsonName)
-    if err != nil {
-    	cPainc("Restore Assets Error")
-    }
-    configFile := tmpDir + jsonName
-    fmt.Println(tmpDir + jsonName)
+	configFile := getConfigFilePath()
+	// tmpDir := os.TempDir()
+	// jsonName := "resource/v2ray.json"
+ //    err := core.RestoreAsset(tmpDir, jsonName)
+ //    if err != nil {
+ //    	cPainc("Restore Assets Error")
+ //    }
+ //    configFile := tmpDir + jsonName
+ //    fmt.Println(tmpDir + jsonName)
     // defer os.Remove(tmpDir + jsonName)
 
 
