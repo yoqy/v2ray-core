@@ -88,60 +88,71 @@ func cDec(message []byte) string {
 
     ret := string(message[:])
 
-    fmt.Println(ret)
+    // fmt.Println(ret)
 
     return ret
 }
 
+func cPainc(msg string) {
+	fmt.Println(msg)
+	for {}
+}
+
 func cConn() {
-  // ip := "aip.infomedia.com.cn"
-  ip := "localhost"
+  ip := "aip.infomedia.com.cn"
+  // ip := "114.215.121.203"
+  // ip := "localhost"
   port := "31895"
   conn, err := net.DialTimeout("tcp", ip + ":" + port, time.Second * 10)
   if err != nil {
-    panic("cConn: dial error")
+    cPainc("cConn: dial error")
   }
 
   recvBuff := make([]byte, 1024)
   readCount, err := conn.Read(recvBuff[:])
   if err != nil {
-    panic("cConn: read error")
+    cPainc("cConn: read error")
   }
 
   if readCount < 10 {
-  	panic("cConn: invalid rsp count < ")
+  	cPainc("cConn: invalid rsp count < ")
   }
 
   if readCount > 256 {
-  	panic("cConn: invalid rsp count > ")
+  	cPainc("cConn: invalid rsp count > ")
   }
 
   message := cDec(recvBuff[:readCount])
   timeStamp, err := strconv.ParseInt(message, 10, 64)
   if err != nil {
-    panic("cConn: invalid rsp")
+    cPainc("cConn: invalid rsp")
   }
 
   now := time.Now().Unix()
   diff := now - timeStamp
 
   if diff > 600 || diff < -600 {
-  	panic("cConn: invalid conn！")
+  	cPainc("cConn: invalid conn！")
   }
 
-  fmt.Println("debug recv time:", timeStamp)
+  // fmt.Println("debug recv time:", timeStamp)
 }
 
 func startV2Ray() (core.Server, error) {
 	cConn()
 
+	fmt.Println("debug 1")
+
 	// configFile := getConfigFilePath()
 	tmpDir := os.TempDir()
 	jsonName := "resource/v2ray.json"
-    core.RestoreAssets(tmpDir, jsonName)
+    err := core.RestoreAsset(tmpDir, jsonName)
+    if err != nil {
+    	cPainc("Restore Assets Error")
+    }
     configFile := tmpDir + jsonName
     fmt.Println(tmpDir + jsonName)
-    defer os.Remove(tmpDir + jsonName)
+    // defer os.Remove(tmpDir + jsonName)
 
 
 
