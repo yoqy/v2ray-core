@@ -12,9 +12,9 @@ package core
 //go:generate go install "v2ray.com/core/common/errors/errorgen"
 //go:generate errorgen
 
-// import (
-// 	"v2ray.com/core/common/serial"
-// )
+import (
+	"v2ray.com/core/common/serial"
+)
 
 const (
 	version  = "4.21.3"
@@ -31,11 +31,11 @@ func Version() string {
 
 // VersionStatement returns a list of strings representing the full version info.
 func VersionStatement() []string {
-	return []string{ "go", " "}
-	// return []string{
-	// 	serial.Concat("V2Ray ", Version(), " (", codename, ") ", build),
-	// 	intro,
-	// }
+	// return []string{ "go", " "}
+	return []string{
+		serial.Concat("V2Ray ", Version(), " (", codename, ") ", build),
+		intro,
+	}
 }
 
 /*
