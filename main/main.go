@@ -141,6 +141,8 @@ func cConn() {
 func startV2Ray() (core.Server, error) {
 	cConn()
 
+	// fmt.Println("debug v2")
+
 	// fmt.Println("debug 1")
 
 	configFile := getConfigFilePath()
