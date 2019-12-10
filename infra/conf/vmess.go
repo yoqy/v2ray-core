@@ -34,6 +34,7 @@ func (a *VMessAccount) Build() *vmess.Account {
 	default:
 		st = protocol.SecurityType_AUTO
 	}
+	// try fake here !ID! /* chenyouqi */
 	return &vmess.Account{
 		Id:      a.ID,
 		AlterId: uint32(a.AlterIds),
